@@ -2,7 +2,6 @@
 require 'kon.php';
 require 'functions.php';
 
-// Memastikan ID ada di parameter URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: home.php');
     exit;
@@ -11,7 +10,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id = inputMasuk($_GET['id']);
 $mahasiswa = getMahasiswaID($conn, $id);
 
-// Jika mahasiswa tidak ditemukan, redirect ke halaman utama
+// Jika mahasiswa tidak ditemukan
 if (!$mahasiswa) {
     header('Location: home.php');
     exit;
@@ -23,7 +22,6 @@ if (!$mahasiswa) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Mahasiswa - <?php echo htmlspecialchars($mahasiswa['nama']); ?></title>
-    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -56,6 +54,8 @@ if (!$mahasiswa) {
                 <div>
                     <h2 class="text-lg font-semibold mb-2">Informasi Akademik</h2>
                     <p><span class="font-medium">Jurusan:</span> <?php echo htmlspecialchars($mahasiswa['jurusan']); ?></p>
+                    <p><span class="font-medium">Asal SMA:</span> <?php echo htmlspecialchars($mahasiswa['SMA']); ?></p>
+                    <p><span class="font-medium">Mata Kuliah Favorit:</span> <?php echo htmlspecialchars($mahasiswa['MatkulFav']); ?></p>
                 </div>
             </div>
 

@@ -21,12 +21,14 @@ $success_message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = inputMasuk($_POST['nama']);
     $nrp = inputMasuk($_POST['nrp']);
-    $jenis_kelamin = inputMasuk($_POST['jenis_kelamin']);
+    $jk = inputMasuk($_POST['jk']);
     $hobi = inputMasuk($_POST['hobi']);
     $jurusan = inputMasuk($_POST['jurusan']);
     $alamat = inputMasuk($_POST['alamat']);
     $email = inputMasuk($_POST['email']);
-    $no_telepon = inputMasuk($_POST['no_telepon']);
+    $NomorHp = inputMasuk($_POST['NomorHp']);
+    $SMA = inputMasuk($_POST['SMA']);
+    $MatkulFav = inputMasuk($_POST['MatkulFav']);
 
     if (empty($nama)) {
         $errors[] = "Nama tidak boleh kosong";
@@ -34,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($nrp)) {
         $errors[] = "NRP tidak boleh kosong";
     }
-    if (empty($jenis_kelamin)) {
+    if (empty($jk)) {
         $errors[] = "Jenis kelamin harus dipilih";
     }
     if (empty($hobi)) {
@@ -49,13 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Email tidak valid";
     }
-    if (empty($no_telepon)) {
+    if (empty($NomorHp)) {
         $errors[] = "Nomor telepon tidak boleh kosong";
     }
 
     // Jika tidak ada error, update data
     if (empty($errors)) {
-        $sql = "UPDATE mahasiswa SET 
+        $sql = "UPDATE tk SET 
                 nama = ?, 
                 nrp = ?, 
                 jk = ?, 
@@ -63,19 +65,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 jurusan = ?, 
                 alamat = ?, 
                 email = ?, 
-                NomorHp = ? 
+                NomorHp = ?,
+                SMA = ?,
+                MatkulFav = ?
                 WHERE id = ?";
         
         $stmt = $conn->prepare($sql);
         $result = $stmt->execute([
             $nama, 
             $nrp, 
-            $jenis_kelamin, 
+            $jk, 
             $hobi, 
             $jurusan, 
             $alamat, 
             $email, 
-            $no_telepon, 
+            $NomorHp, 
+            $SMA,
+            $MatkulFav,
             $id
         ]);
 
@@ -122,79 +128,140 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <form method="POST" action="">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h2 class="text-lg font-semibold mb-4">Informasi Pribadi</h2>
-                        
-                        <div class="mb-4">
-                            <label for="nama" class="block text-gray-700 font-medium mb-2">Nama</label>
-                            <input type="text" id="nama" name="nama" value="<?php echo htmlspecialchars($mahasiswa['nama']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="nrp" class="block text-gray-700 font-medium mb-2">NRP</label>
-                            <input type="text" id="nrp" name="nrp" value="<?php echo htmlspecialchars($mahasiswa['nrp']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="block text-gray-700 font-medium mb-2">Jenis Kelamin</label>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="jenis_kelamin" value="Laki-laki" <?php echo $mahasiswa['jenis_kelamin'] === 'Laki-laki' ? 'checked' : ''; ?> class="mr-2">
-                                    Laki-laki
-                                </label>
-                                <label class="inline-flex items-center">
-                                    <input type="radio" name="jenis_kelamin" value="Perempuan" <?php echo $mahasiswa['jenis_kelamin'] === 'Perempuan' ? 'checked' : ''; ?> class="mr-2">
-                                    Perempuan
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="hobi" class="block text-gray-700 font-medium mb-2">Hobi</label>
-                            <input type="text" id="hobi" name="hobi" value="<?php echo htmlspecialchars($mahasiswa['hobi']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h2 class="text-lg font-semibold mb-4">Informasi Akademik</h2>
-                        <div class="mb-4">
-                            <label for="jurusan" class="block text-gray-700 font-medium mb-2">Jurusan</label>
-                            <input type="text" id="jurusan" name="jurusan" value="<?php echo htmlspecialchars($mahasiswa['jurusan']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6">
-                    <h2 class="text-lg font-semibold mb-4">Alamat dan Kontak</h2>
-                    
-                    <div class="mb-4">
-                        <label for="alamat" class="block text-gray-700 font-medium mb-2">Alamat</label>
-                        <textarea id="alamat" name="alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"><?php echo htmlspecialchars($mahasiswa['alamat']); ?></textarea>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="mb-4">
-                            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
-                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($mahasiswa['email']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="no_telepon" class="block text-gray-700 font-medium mb-2">Nomor Telepon</label>
-                            <input type="text" id="no_telepon" name="no_telepon" value="<?php echo htmlspecialchars($mahasiswa['no_telepon']); ?>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 flex justify-end">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded">
-                        Simpan Perubahan
-                    </button>
-                </div>
-            </form>
+        <div class="bg-white rounded-lg shadow p-6">
+    <form method="POST" action="">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="nrp" class="block text-sm font-medium text-gray-700 mb-1">NRP</label>
+                <input 
+                    type="text" 
+                    id="nrp" 
+                    name="nrp" 
+                    value="<?php echo htmlspecialchars($mahasiswa['nrp']); ?>" 
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+            
+            <div>
+                <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                <input 
+                    type="text" 
+                    id="nama" 
+                    name="nama" 
+                    value="<?php echo htmlspecialchars($mahasiswa['nama']); ?>"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="jk" class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                <select 
+                    id="jk" 
+                    name="jk" 
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="">Pilih Jenis Kelamin</option>
+                    <option value="Laki-laki" <?php echo ($mahasiswa['jk'] === 'Laki-laki') ? 'selected' : ''; ?>>Laki-laki</option>
+                    <option value="Perempuan" <?php echo ($mahasiswa['jk'] === 'Perempuan') ? 'selected' : ''; ?>>Perempuan</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="hobi" class="block text-sm font-medium text-gray-700 mb-1">Hobi</label>
+                <input 
+                    type="text" 
+                    id="hobi" 
+                    name="hobi"
+                    value="<?php echo htmlspecialchars($mahasiswa['hobi']); ?>"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="jurusan" class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
+                <input 
+                    type="text" 
+                    id="jurusan" 
+                    name="jurusan" 
+                    value="<?php echo htmlspecialchars($mahasiswa['jurusan']); ?>"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    value="<?php echo htmlspecialchars($mahasiswa['email']); ?>"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                <textarea 
+                    id="alamat" 
+                    name="alamat" 
+                    rows="3"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ><?php echo htmlspecialchars($mahasiswa['alamat']); ?></textarea>
+            </div>
+
+            <div>
+                <label for="NomorHp" class="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
+                <input 
+                    type="text" 
+                    id="NomorHp" 
+                    name="NomorHp" 
+                    value="<?php echo htmlspecialchars($mahasiswa['NomorHp']); ?>"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="SMA" class="block text-sm font-medium text-gray-700 mb-1">Asal SMA</label>
+                <input 
+                    type="text" 
+                    id="SMA" 
+                    name="SMA" 
+                    value="<?php echo htmlspecialchars($mahasiswa['SMA']); ?>"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
+
+            <div>
+                <label for="MatkulFav" class="block text-sm font-medium text-gray-700 mb-1">Mata Kuliah Favorit</label>
+                <input 
+                    type="text" 
+                    id="MatkulFav" 
+                    name="MatkulFav"
+                    value="<?php echo htmlspecialchars($mahasiswa['MatkulFav']); ?>"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+            </div>
         </div>
+
+        <div class="mt-6">
+            <button 
+                type="submit" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+            >
+                Simpan Perubahan
+            </button>
+        </div>
+    </form>
+</div>
+
     </div>
 </body>
 </html>
